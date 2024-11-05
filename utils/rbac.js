@@ -9,10 +9,10 @@ export const permissions = [
     },
 
     {
-        role: 'admin',
+        role: 'therapist',
         actions: [
-            'get_Userprofile',
-            'update_Userprofile',
+            'get_therapist_profile',
+            'update_therapist_profile',
         ]
     }
 ]
