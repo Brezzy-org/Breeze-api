@@ -16,7 +16,7 @@ therapistRouter.get("/therapist/me", isAuthenticated, hasPermission('get_therapi
 
 therapistRouter.patch("/therapist/me/:id", isAuthenticated, hasPermission('update_therapist_profile'), updateTherapistProfile);
 
-therapistRouter.post("/therapist/logout", logoutTherapist)
+therapistRouter.post("/therapist/logout", logoutTherapist);
 
 // export router
 export default therapistRouter
