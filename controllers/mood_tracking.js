@@ -10,8 +10,10 @@ export const addMood = async (req, res, next) => {
             return res.status(422).json(error);
         }
 
+        console.log(req.auth.id)
+
         // Attach authenticated user's ID
-        const moodData = { ...value, userId: req.auth.id };
+     const moodData = { ...value, userId: req.auth.id };  // Ensure userId is added from req.auth.id
 
         // Write mood to the database
         await MoodModel.create(moodData);

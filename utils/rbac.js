@@ -9,6 +9,7 @@ export const permissions = [
             'get_mood',
             'update_mood',
             'delete_mood',
+            'get_blogs'
 
 
         ]
@@ -21,6 +22,10 @@ export const permissions = [
             'update_therapist_profile',
             'get_moods',
             'get_mood',
+            'create_blog',
+            'get_blogs',
+            'update_blog',
+            'delete_blog',
         ]
     }
 ]

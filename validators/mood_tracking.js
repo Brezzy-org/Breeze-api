@@ -1,13 +1,5 @@
 import Joi from "joi";
 
-// Custom validation for ObjectId
-// const objectIdValidator = (value, helpers) => {
-//     if (!mongoose.Types.ObjectId.isValid(value)) {
-//         return helpers.error("any.invalid");
-//     }
-//     return value;
-// };
-
 export const addMoodValidator = Joi.object({
     moodType: Joi.string().required(),
     moodLevel: Joi.string().required(),
