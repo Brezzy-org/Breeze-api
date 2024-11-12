@@ -8,23 +8,32 @@ export const isAuthenticated = expressjwt({
     algorithms: ['HS256']
 });
 
-
 export const hasPermission = (action) => {
     return async (req, res, next) => {
         try {
-            // Determine which model to use based on route or role
+            // Ensure req.auth and req.auth.id are available
+            if (!req.auth || !req.auth.id) {
+                return res.status(401).json({ error: "Unauthorized. Authentication required." });
+            }
+
+            // Determine model based on route
             const model = req.route.path.includes('/therapist') ? TherapistModel : UserModel;
-
-            // Find the user or therapist
             const person = await model.findById(req.auth.id);
+            
+            if (!person) {
+                return res.status(404).json({ error: "User not found" });
+            }
 
-            // Find permissions based on the role
+            // Debug role found in the database
+            console.log("Role found in database:", person.role);
+
+            // Fetch permissions for role
             const permission = permissions.find(value => value.role === person.role);
             if (!permission) {
                 return res.status(403).json('No permission found!');
             }
 
-            // Check if the action is permitted
+            // Check action permission
             if (permission.actions.includes(action)) {
                 next();
             } else {
@@ -33,5 +42,7 @@ export const hasPermission = (action) => {
         } catch (error) {
             next(error);
         }
-    }
-}
+    };
+};
+
+

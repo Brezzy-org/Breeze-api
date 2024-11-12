@@ -75,7 +75,7 @@ export const updateMood = async (req, res, next) => {
             return res.status(403).json("Not authorized to update this mood.");
         }
 
-        const updatedMood = await MoodModel.findByIdAndUpdate(req.params.id, value, { new: true });
+        const updatedMood = await MoodModel.findByIdAndUpdate(id, value, { new: true });
         if (!updatedMood) {
             return res.status(404).json({ message: "Mood not found" });
         }

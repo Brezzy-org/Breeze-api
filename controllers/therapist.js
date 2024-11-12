@@ -53,10 +53,11 @@ export const loginTherapist = async (req, res, next) => {
 
         // Generate token
         const token = jwt.sign(
-            { id: therapist._id },
+            { id: therapist._id, role: 'therapist' }, // Add role here
             process.env.JWT_PRIVATE_KEY,
             { expiresIn: '24h' }
         );
+
 
         // Return response
         res.status(200).json({
@@ -75,7 +76,7 @@ export const getTherapistProfile = async (req, res, next) => {
         const therapist = await TherapistModel
             .findById(req.auth.id)
             .select({ password: false });
-        
+
         // Check if therapist exists
         if (!therapist) {
             return res.status(404).json({ message: 'Therapist not found' });
