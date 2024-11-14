@@ -26,6 +26,7 @@ export const permissions = [
             'get_blogs',
             'update_blog',
             'delete_blog',
+            'get_blogs_by_therapist'
         ]
     }
 ]

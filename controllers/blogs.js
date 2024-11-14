@@ -34,14 +34,26 @@ export const createBlog = async (req, res, next) => {
     }
 };
 
-
-// Get all blogs (Users and Therapists)
-export const getBlogs = async (req, res, next) => {
+// Get blogs by a specific therapist (Users and Therapists)
+export const getBlogsByTherapist = async (req, res, next) => {
     try {
+        const therapistId = req.params.therapistId || req.auth.id; 
         const { sort = "{}", limit = 10, skip = 0 } = req.query;
-        // Fetch blogs,sorted and paginated
-        const blogs = await BlogModel.find()
-            .sort(JSON.parse(sort))
+
+        // Determine sorting order safely
+        let sortOrder;
+        try {
+            sortOrder = JSON.parse(sort);
+        } catch {
+            sortOrder = { createdAt: -1 }; // Default: newest first
+        }
+
+        console.log("Therapist ID:", therapistId);
+        console.log("Sort Order:", sortOrder);
+
+        // Fetch blogs created by the specific therapist
+        const blogs = await BlogModel.find({ author: therapistId })
+            .sort(sortOrder)
             .limit(Number(limit))
             .skip(Number(skip))
             .populate('author', 'name');
@@ -51,6 +63,45 @@ export const getBlogs = async (req, res, next) => {
         next(error);
     }
 };
+
+
+
+
+// Get all blogs with sorting (Users and Therapists)
+export const getBlogs = async (req, res, next) => {
+    try {
+        const { sort = 'latest', limit = 10, skip = 0 } = req.query;
+
+        // Determine the sorting order 
+        let sortOrder;
+        switch (sort) {
+            case 'latest':
+                sortOrder = { createdAt: -1 }; // Newest first
+                break;
+            case 'oldest':
+                sortOrder = { createdAt: 1 };  // Oldest first
+                break;
+            case 'author':
+                sortOrder = { author: 1 };     // Alphabetical order by author
+                break;
+            default:
+                sortOrder = {}; // Default is no sorting
+                break;
+        }
+
+        // Fetch blogs with sorting, pagination, and author population
+        const blogs = await BlogModel.find()
+            .sort(sortOrder)
+            .limit(Number(limit))
+            .skip(Number(skip))
+            .populate('author', 'name');
+
+        res.status(200).json(blogs);
+    } catch (error) {
+        next(error);
+    }
+};
+
 
 
 // Update a blog (Therapist only)

@@ -7,6 +7,7 @@ export const blogSchema = new Schema({
     title: { type: String, required: true },
     article: { type: String, required: true },
     image: { type: String },
+    createdAt: { type: Date, default: Date.now } // Automatically adds creation date
 },{
     timestamps: true
 });
