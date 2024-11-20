@@ -18,11 +18,11 @@ export const createBlog = async (req, res, next) => {
         //     return res.status(403).json("Only therapists can create blogs.");
         // }
 
+
         // Prepare blog data with author ID
         const blogData = {
             ...value,                 // Use validated data
             author: req.auth.id,      // Add therapist's ID as author
-            image: req.file?.path     // Add the path of the image if uploaded
         };
 
         // Create and save the blog
@@ -37,7 +37,7 @@ export const createBlog = async (req, res, next) => {
 // Get blogs by a specific therapist (Users and Therapists)
 export const getBlogsByTherapist = async (req, res, next) => {
     try {
-        const therapistId = req.params.therapistId || req.auth.id; 
+        const therapistId = req.auth.id;
         const { sort = "{}", limit = 10, skip = 0 } = req.query;
 
         // Determine sorting order safely
@@ -116,31 +116,11 @@ export const updateBlog = async (req, res, next) => {
             return res.status(422).json({ error: error.details });
         }
 
-        console.log('susBody', req.body)
-
-        const { id } = req.params;
-
-        // Find the blog by ID
-        const blog = await BlogModel.findById(id);
-        if (!blog) {
-            return res.status(404).json({ error: "Blog not found." });
-        }
-
-        // Check if the logged-in user is the author of the blog
-        if (blog.author.toString() !== req.auth.id) {
-            return res.status(403).json({ error: "Not authorized to update this blog." });
-        }
-        console.log('myVslue', value)
-
         // Prepare the updated blog data
         const updatedBlogData = {
             ...value,                   // Include validated data from body
             author: req.auth.id,        // Ensure the author is the logged-in user
-            image: req.file ? req.file?.path : blog.image,  // Update image if a new file is provided
         };
-
-        console.log('myVslue', updatedBlogData)
-
 
         // Update the blog and return the updated document
         const updatedBlog = await BlogModel.findByIdAndUpdate(req.params.id, updatedBlogData, { new: true });
@@ -168,6 +148,22 @@ export const deleteBlog = async (req, res, next) => {
 
         await BlogModel.findByIdAndDelete(id);
         res.status(200).json({ message: "Blog successfully deleted!" });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// Delete a blog (Therapist only)
+export const getSingleBlog = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const blog = await BlogModel.findById(id);
+
+        if (!blog) {
+            return res.status(404).json("Blog not found");
+        }
+
+        res.status(200).json(blog);
     } catch (error) {
         next(error);
     }

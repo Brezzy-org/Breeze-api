@@ -15,20 +15,21 @@ export const hasPermission = (action) => {
             if (!req.auth || !req.auth.id) {
                 return res.status(401).json({ error: "Unauthorized. Authentication required." });
             }
+            
 
             // Determine model based on route
-            const model = req.route.path.includes('/therapist') ? TherapistModel : UserModel;
-            const person = await model.findById(req.auth.id);
-            
-            if (!person) {
-                return res.status(404).json({ error: "User not found" });
-            }
+            // const model = req.route.path.includes('/therapist') ? TherapistModel : UserModel;
+            // const person = await model.findById(req.auth.id);
+
+            // if (!person) {
+            //     return res.status(404).json({ error: "User not found" });
+            // }
 
             // Debug role found in the database
-            console.log("Role found in database:", person.role);
+          
 
             // Fetch permissions for role
-            const permission = permissions.find(value => value.role === person.role);
+            const permission = permissions.find(value => value.role === req.auth.role);
             if (!permission) {
                 return res.status(403).json('No permission found!');
             }
