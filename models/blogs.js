@@ -6,9 +6,9 @@ export const blogSchema = new Schema({
     // therapistName: {type: String, required: true},
     title: { type: String, required: true },
     article: { type: String, required: true },
-    image: { type: String },
+    image: { type: String, required: true },
     createdAt: { type: Date, default: Date.now } // Automatically adds creation date
-},{
+}, {
     timestamps: true
 });
 
